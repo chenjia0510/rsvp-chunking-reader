@@ -1,0 +1,273 @@
+@keyframes rsvpFadeIn {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(10px); }
+}
+
+@keyframes rsvpFadeOut {
+  from { opacity: 1; backdrop-filter: blur(10px); }
+  to { opacity: 0; backdrop-filter: blur(0px); }
+}
+
+#rsvp-chunking-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%);
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #f8fafc;
+}
+
+#rsvp-chunking-overlay.rsvp-fade-in {
+  animation: rsvpFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#rsvp-chunking-overlay.rsvp-fade-out {
+  animation: rsvpFadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#rsvp-chunking-display {
+  font-size: 72px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-align: center;
+  max-width: 80%;
+  padding: 40px;
+  line-height: 1.1;
+  min-height: 180px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25em; /* Restores spaces between words in flex container */
+  text-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+  transition: transform 0.05s ease-out;
+}
+
+/* Word Spans for Hovering */
+.rsvp-word {
+  transition: color 0.15s ease, background 0.1s ease;
+  border-radius: 8px;
+  padding: 2px 8px; /* Slightly padded for easier hover hit area */
+}
+
+.rsvp-word-locked {
+  background: rgba(251, 191, 36, 0.15) !important;
+  border-bottom: 2px solid #fbbf24;
+}
+
+/* Hover effects handled by JS to support both RSVP dark mode and In-Page light mode */
+
+.rsvp-instruction {
+  position: absolute;
+  top: 20%;
+  font-size: 14px;
+  color: #94a3b8;
+  opacity: 0.8;
+  letter-spacing: 0.02em;
+}
+
+.rsvp-controls {
+  position: absolute;
+  bottom: 12%;
+  display: flex;
+  gap: 16px;
+}
+
+.rsvp-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 100px; 
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
+
+.rsvp-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.rsvp-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  width: 0%;
+  transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+/* --- Interactive Dictionary Tooltip --- */
+
+#rsvp-tooltip {
+  position: absolute;
+  z-index: 2147483648; /* Highest */
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  width: 320px;
+  transform: translate(-50%, calc(-100% - 10px));
+  pointer-events: none; /* Let user click through to words */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  color: white; /* Important for in-page mode to stay legible */
+  text-align: left;
+  line-height: 1.4;
+  text-shadow: none;
+}
+
+#rsvp-tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; /* Once visible, allow clicking inside (e.g., audio) */
+  transform: translate(-50%, -100%);
+}
+
+#rsvp-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: rgba(15, 23, 42, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.rsvp-dict-loading {
+  font-size: 14px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.rsvp-dict-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.rsvp-dict-header strong {
+  font-size: 18px;
+  color: #f8fafc;
+}
+
+.rsvp-phonetic {
+  font-size: 13px;
+  color: #60a5fa;
+  font-family: monospace;
+}
+
+.rsvp-dict-body {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.rsvp-dict-body::-webkit-scrollbar {
+  width: 4px;
+}
+.rsvp-dict-body::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+}
+
+.rsvp-dict-meaning {
+  margin-bottom: 12px;
+}
+.rsvp-dict-meaning:last-child {
+  margin-bottom: 0;
+}
+
+.rsvp-dict-pos {
+  font-size: 11px;
+  color: #94a3b8; /* subtle gray */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.rsvp-dict-def {
+  font-size: 14px;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.rsvp-dict-ex {
+  font-size: 13px;
+  color: #cbd5e1;
+  font-style: italic;
+  border-left: 2px solid #475569;
+  padding-left: 8px;
+}
+
+.rsvp-dict-footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+}
+
+.rsvp-dict-notfound {
+  color: #ef4444;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* --- In-Page Chunking Mode --- */
+
+.in-page-chunk {
+  display: inline !important;
+  margin: 0 4px !important;
+  background-color: transparent !important;
+  line-height: inherit !important;
+}
+
+.in-page-chunk::before {
+  content: "[ ";
+  color: rgba(148, 163, 184, 0.9) !important;
+  font-weight: 600;
+}
+
+.in-page-chunk::after {
+  content: " ]";
+  color: rgba(148, 163, 184, 0.9) !important;
+  font-weight: 600;
+}
+
+/* In-Page mode adjusts words slightly to reset padding */
+.in-page-chunk .rsvp-word {
+  padding: 0 1px; /* Tighter than RSVP mode */
+  border-radius: 4px;
+  transition: background 0.1s ease, color 0.15s ease;
+}

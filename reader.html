@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RSVP Reader - Pasteboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="content.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000000; /* Apple Pure Black */
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      color: #e5e5ea; /* Apple Light Gray Text */
+      -webkit-font-smoothing: antialiased;
+    }
+    .header {
+      background: rgba(28, 28, 30, 0.75); /* System Gray 6 Dark */
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 16px 32px;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 32px;
+    }
+    .title-row h2 {
+      margin-top: 0;
+      font-size: 32px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.8px;
+    }
+    .subtitle {
+      color: #8e8e93; /* System Gray */
+      margin-bottom: 28px;
+      font-size: 17px;
+      line-height: 1.5;
+    }
+    textarea {
+      width: 100%;
+      height: 350px;
+      padding: 24px;
+      background: #1c1c1e; /* Elevated Root Gray */
+      color: #ffffff;
+      border: 1px solid #38383a;
+      border-radius: 16px;
+      font-family: inherit;
+      font-size: 20px;
+      line-height: 1.6;
+      resize: vertical;
+      box-sizing: border-box;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    textarea::placeholder {
+      color: #636366;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #0a84ff; /* Apple Blue */
+      box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.25), 0 4px 24px rgba(0,0,0,0.5);
+      background: #2c2c2e;
+    }
+    .controls {
+      margin-top: 24px;
+      display: flex;
+      gap: 16px;
+    }
+    button {
+      background: #0a84ff;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+    }
+    button:hover { 
+      transform: scale(1.02);
+      background: #007aff;
+      box-shadow: 0 6px 16px rgba(10, 132, 255, 0.4);
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-secondary {
+      background: #2c2c2e;
+      color: #0a84ff;
+      box-shadow: none;
+    }
+    .btn-secondary:hover { 
+      background: #3a3a3c; 
+      box-shadow: none;
+      transform: scale(1.02);
+    }
+    .btn-secondary:active {
+      transform: scale(0.98);
+    }
+
+    #display-area {
+      display: none;
+      background: #1c1c1e;
+      padding: 48px;
+      border-radius: 20px;
+      border: 1px solid #38383a;
+      font-size: 24px; /* Dramatically increased reading font size */
+      line-height: 1.8;
+      color: #e5e5ea;
+      min-height: 500px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      letter-spacing: 0.2px;
+    }
+    
+    /* Apple Override for In-Page Chunks specifically in the Reader */
+    #display-area .in-page-chunk::before,
+    #display-area .in-page-chunk::after {
+      color: #636366 !important; /* Elegant subtle brackets */
+      font-weight: 500;
+    }
+    #display-area .rsvp-word-locked {
+      background: rgba(10, 132, 255, 0.2) !important;
+      border-bottom: 2px solid #0a84ff;
+    }
+    
+    /* Ensure dictionary displays properly in the reader page */
+    #rsvp-tooltip {
+      position: absolute;
+    }
+    /* Light Theme Settings */
+    body.light-reader {
+      background-color: #ffffff;
+      color: #1c1c1e;
+    }
+    body.light-reader .header {
+      background: rgba(242, 242, 247, 0.85);
+      border-bottom: 0.5px solid rgba(0,0,0,0.1);
+    }
+    body.light-reader .header h1,
+    body.light-reader .title-row h2 {
+      color: #000;
+    }
+    body.light-reader .subtitle {
+      color: #3a3a3c;
+    }
+    body.light-reader textarea {
+      background: #f2f2f7;
+      color: #000;
+      border: 1px solid #d1d1d6;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    body.light-reader #display-area {
+      background: #f2f2f7;
+      border: 1px solid #d1d1d6;
+      color: #1c1c1e;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    body.light-reader .btn-secondary {
+      background: #e5e5ea;
+      color: #0a84ff;
+    }
+    body.light-reader .btn-secondary:hover {
+      background: #d1d1d6;
+    }
+    
+    .theme-toggle {
+      margin-left: auto;
+      background: transparent;
+      color: inherit;
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 14px;
+      border-radius: 8px;
+    }
+    .theme-toggle:hover {
+      background: rgba(255,255,255,0.1);
+      transform: none;
+    }
+    body.light-reader .theme-toggle {
+      border-color: rgba(0,0,0,0.2);
+      color: #000;
+    }
+    body.light-reader .theme-toggle:hover {
+      background: rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body class="dark-reader">
+  <div class="header">
+    <svg fill="none" height="28" viewBox="0 0 24 24" width="28" xmlns="http://www.w3.org/0000/svg">
+      <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="#38BDF8"/>
+      <path d="M16 12L10 8V16L16 12Z" fill="#0F172A"/>
+    </svg>
+    <h1>Pasteboard Reader</h1>
+    <button id="theme-toggle" class="theme-toggle">☀️ Light</button>
+  </div>
+
+  <div class="container">
+    <div id="input-section">
+      <div class="title-row">
+        <h2>Bypass PDF Blocks</h2>
+      </div>
+      <p class="subtitle">Copy text from any PDF, Word document, or restricted webpage and paste it below. The NLP engine will instantly analyze and format the text.</p>
+      
+      <textarea id="text-input" placeholder="Paste your English text here..."></textarea>
+      
+      <div class="controls">
+        <button id="chunk-btn">📖 In-Page Chunk Format</button>
+        <button id="rsvp-btn" class="btn-secondary">🚀 Speed Read (RSVP)</button>
+      </div>
+    </div>
+
+    <div id="display-area"></div>
+    
+    <div id="controls-bottom" style="display:none; margin-top:32px; text-align:center;">
+       <button id="back-btn" class="btn-secondary">← Back to Pasteboard</button>
+    </div>
+  </div>
+
+  <script src="libs/compromise.min.js"></script>
+  <script src="content.js"></script>
+  <script src="reader.js"></script>
+</body>
+</html>
