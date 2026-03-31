@@ -21,9 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const text = textInput.value.trim();
     if (!text) return;
     
+    // PDF Cleanup: Remove hyphen-newlines (e.g., "hard-\nware"), replace single newlines with space, keep double newlines
+    let cleanedText = text.replace(/([a-zA-Z])-\n([a-zA-Z])/g, '$1$2').replace(/(?<!\n)\n(?!\n)/g, ' ');
+    
     // Convert newlines to paragraphs for better structure
     displayArea.innerHTML = '';
-    const paragraphs = text.split(/\n+/);
+    const paragraphs = cleanedText.split(/\n+/);
     paragraphs.forEach(pText => {
       if (pText.trim()) {
         const p = document.createElement('p');
