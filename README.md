@@ -51,9 +51,4 @@
 * **Free Dictionary API** - 提供即時音標、發音與英文釋義
 * **CSS3 Glassmorphism** - 時髦的深色毛玻璃主題 (Dark Theme)
 
-## 贊助與支持
-如果這個小工具幫你順利 Pass 了期末考、或是讓你讀 Paper 的時間少了一半，歡迎請我喝杯咖啡！
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/chenjia0510)
-
-*(有興趣的開發者歡迎 Fork 本專案，一起讓英文閱讀變得更簡單！)*
