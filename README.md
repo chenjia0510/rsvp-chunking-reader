@@ -54,6 +54,6 @@
 ## 贊助與支持
 如果這個小工具幫你順利 Pass 了期末考、或是讓你讀 Paper 的時間少了一半，歡迎請我喝杯咖啡！
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/your-username)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/chenjia0510)
 
 *(有興趣的開發者歡迎 Fork 本專案，一起讓英文閱讀變得更簡單！)*
